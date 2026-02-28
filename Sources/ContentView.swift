@@ -318,7 +318,7 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .background(bg)
                 .foregroundColor(textPrimary)
-            }(),
+            },
             scrollToFraction: previewScrollFraction,
             onScrollPositionChange: { fraction in
                 guard !isEditorScrolling else { return }

@@ -115,23 +115,23 @@ struct ScrollingTextView: NSViewRepresentable {
 // Wraps preview content in NSScrollView for programmatic scrolling
 
 struct ScrollingPreviewView<Content: View>: View {
-    let content: Content
+    let content: () -> Content
     var scrollToFraction: CGFloat?
     var onScrollPositionChange: ((CGFloat) -> Void)?
-    
+
     init(
-        @ViewBuilder content: () -> Content,
+        @ViewBuilder content: @escaping () -> Content,
         scrollToFraction: CGFloat? = nil,
         onScrollPositionChange: ((CGFloat) -> Void)? = nil
     ) {
-        self.content = content()
+        self.content = content
         self.scrollToFraction = scrollToFraction
         self.onScrollPositionChange = onScrollPositionChange
     }
-    
+
     var body: some View {
         ScrollingPreviewRepresentable(
-            content: content,
+            content: AnyView(content()),
             scrollToFraction: scrollToFraction,
             onScrollPositionChange: onScrollPositionChange
         )
@@ -176,9 +176,8 @@ struct ScrollingPreviewRepresentable: NSViewRepresentable {
         context.coordinator.hostingView = hostingView
         
         // Setup width constraint to match scroll view
-        if let widthConstraint = hostingView.widthAnchor.constraint(equalTo: scrollView.contentView.widthAnchor) {
-            widthConstraint.isActive = true
-        }
+        let widthConstraint = hostingView.widthAnchor.constraint(equalTo: scrollView.contentView.widthAnchor)
+        widthConstraint.isActive = true
         
         // Observe scroll position for bidirectional sync (optional)
         NotificationCenter.default.addObserver(
