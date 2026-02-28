@@ -16,7 +16,8 @@ struct MarkdownPreviewView: View {
                 MarkdownRenderedView(markdown: markdown, searchText: searchText)
             }
             .padding(28)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: 720, alignment: .leading) // Max width for readability
+            .frame(maxWidth: .infinity, alignment: .center)
         }
         .background(bg)
         .foregroundColor(text)
@@ -89,20 +90,23 @@ struct FullMarkdownView: View {
             Text(attString)
                 .font(.system(size: 28, weight: .bold))
                 .foregroundColor(.white.opacity(0.95))
-                .padding(.top, 16)
-                .padding(.bottom, 8)
+                .padding(.top, 24)
+                .padding(.bottom, 12)
+                .lineSpacing(4)
         case .heading2:
             Text(attString)
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(.white.opacity(0.93))
-                .padding(.top, 14)
-                .padding(.bottom, 6)
+                .padding(.top, 20)
+                .padding(.bottom, 10)
+                .lineSpacing(3)
         case .heading3:
             Text(attString)
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(.white.opacity(0.92))
-                .padding(.top, 12)
-                .padding(.bottom, 4)
+                .padding(.top, 16)
+                .padding(.bottom, 8)
+                .lineSpacing(2)
         case .heading4:
             Text(attString)
                 .font(.system(size: 17, weight: .semibold))
@@ -110,23 +114,25 @@ struct FullMarkdownView: View {
                 .padding(.top, 8)
                 .padding(.bottom, 3)
         case .bullet:
-            HStack(alignment: .top, spacing: 8) {
+            HStack(alignment: .top, spacing: 10) {
                 Text("•")
                     .foregroundColor(Color(red: 0.36, green: 0.82, blue: 0.62))
                 Text(attString)
+                    .lineSpacing(4)
             }
+            .padding(.vertical, 2)
         case .numbered:
             Text(attString)
         case .codeBlock:
-            let codeBg = Color(red: 0.08, green: 0.09, blue: 0.12)
-            let codeBorder = Color.white.opacity(0.08)
+            let codeBg = Color(red: 0.11, green: 0.12, blue: 0.16) // Slightly lighter, Obsidian-like
+            let codeBorder = Color.white.opacity(0.12)
             Text(attString)
                 .font(.system(.body, design: .monospaced))
-                .padding(12)
+                .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(codeBg)
-                .cornerRadius(8)
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(codeBorder))
+                .cornerRadius(10)
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(codeBorder))
         case .blockquote:
             HStack(alignment: .top, spacing: 8) {
                 Rectangle()
@@ -138,7 +144,7 @@ struct FullMarkdownView: View {
             .padding(.vertical, 4)
         case .paragraph:
             Text(attString)
-                .lineSpacing(4)
+                .lineSpacing(6)
         }
     }
     
