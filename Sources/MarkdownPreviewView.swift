@@ -39,21 +39,25 @@ struct AttributedStringView: View {
     let markdown: String
     let searchText: String
     
+    private var rendered: AttributedString? {
+        try? AttributedString(
+            markdown: markdown,
+            options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        )
+    }
+
     var body: some View {
-        do {
-            let attributed = try AttributedString(markdown: markdown, options: AttributedString.MarkdownParsingOptions(
-                interpretedSyntax: .inlineOnlyPreservingWhitespace
-            ))
-            
-            Text(attributed)
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .markdownStyle()
-        } catch {
-            Text(markdown)
-                .font(.body)
-                .textSelection(.enabled)
+        Group {
+            if let rendered {
+                Text(rendered)
+                    .markdownStyle()
+            } else {
+                Text(markdown)
+                    .font(.body)
+            }
         }
+        .textSelection(.enabled)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -63,20 +67,22 @@ struct LegacyMarkdownView: View {
     let markdown: String
     let searchText: String
     
+    private var rendered: AttributedString? {
+        try? AttributedString(markdown: markdown)
+    }
+
     var body: some View {
-        do {
-            let attributed = try AttributedString(markdown: markdown)
-            Text(attributed)
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .markdownStyle()
-        } catch {
-            // Fallback to plain text
-            Text(markdown)
-                .font(.body)
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        Group {
+            if let rendered {
+                Text(rendered)
+                    .markdownStyle()
+            } else {
+                Text(markdown)
+                    .font(.body)
+            }
         }
+        .textSelection(.enabled)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
