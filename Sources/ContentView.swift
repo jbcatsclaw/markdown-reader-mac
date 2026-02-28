@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var currentFileURL: URL?
     @State private var recentFiles: [URL] = []
     @State private var searchText: String = ""
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     @State private var showOpenPanel: Bool = false
     @State private var saveRequestedTick: Int = 0
@@ -18,14 +19,10 @@ struct ContentView: View {
     private let accent = Color(red: 0.36, green: 0.82, blue: 0.62)
 
     var body: some View {
-        HStack(spacing: 0) {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             sidebarContent
-                .frame(minWidth: 240)
-                .background(panel)
-                .overlay(alignment: .trailing) {
-                    Rectangle().fill(border).frame(width: 1)
-                }
-
+                .navigationSplitViewColumnWidth(min: 200, ideal: 240, max: 320)
+        } detail: {
             VStack(spacing: 0) {
                 topBar
                 Divider().overlay(border)
@@ -39,9 +36,22 @@ struct ContentView: View {
                 }
             }
         }
-        .frame(minWidth: 980, minHeight: 620)
+        .navigationSplitViewStyle(.balanced)
+        .frame(minWidth: 900, minHeight: 600)
         .background(bg)
         .tint(accent)
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button {
+                    withAnimation {
+                        columnVisibility = columnVisibility == .all ? .detailOnly : .all
+                    }
+                } label: {
+                    Image(systemName: "sidebar.left")
+                }
+                .help("Toggle Sidebar")
+            }
+        }
         .onReceive(NotificationCenter.default.publisher(for: .openFile)) { _ in
             showOpenPanel = true
         }
@@ -108,6 +118,7 @@ struct ContentView: View {
             .buttonStyle(.plain)
             .padding(12)
         }
+        .background(panel)
     }
     
     // MARK: - Top bar / Split editor
@@ -186,13 +197,11 @@ struct ContentView: View {
             HSplitView {
                 // Left: Preview
                 MarkdownPreviewView(markdown: filteredMarkdown, searchText: searchText)
-                    .frame(minWidth: 420)
-                    .background(bg)
+                    .frame(minWidth: 350)
 
                 // Right: Editor
                 editorView
-                    .frame(minWidth: 420)
-                    .background(bg)
+                    .frame(minWidth: 350)
             }
         }
     }
