@@ -13,6 +13,12 @@ struct ContentView: View {
     @State private var showOpenPanel: Bool = false
     @State private var saveRequestedTick: Int = 0
 
+    // Scroll sync state
+    @State private var editorScrollFraction: CGFloat = 0
+    @State private var previewScrollFraction: CGFloat = 0
+    @State private var isEditorScrolling: Bool = false
+    @State private var isPreviewScrolling: Bool = false
+
     // Notion-like LIGHT theme palette
     private let bg = Color(red: 0.98, green: 0.98, blue: 0.98)          // Near white background
     private let sidebarBg = Color(red: 0.96, green: 0.96, blue: 0.96)   // Sidebar background
@@ -274,27 +280,55 @@ struct ContentView: View {
             Divider().overlay(border)
 
             HSplitView {
-                // Left: Editor
+                // Left: Editor with scroll sync
                 editorView
                     .frame(minWidth: 350)
 
-                // Right: Preview
-                MarkdownPreviewView(markdown: filteredMarkdown, searchText: searchText)
+                // Right: Preview with scroll sync
+                previewView
                     .frame(minWidth: 350)
             }
         }
     }
 
     private var editorView: some View {
-        TextEditor(text: $markdownText)
-            .font(.system(.body, design: .monospaced))
-            .scrollContentBackground(.hidden)
-            .padding(14)
-            .foregroundColor(textPrimary)
-            .background(Color(red: 0.94, green: 0.94, blue: 0.95))
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(border))
-            .cornerRadius(12)
-            .padding(12)
+        ScrollingTextView(text: $markdownText) { fraction in
+            guard !isPreviewScrolling else { return }
+            editorScrollFraction = fraction
+            isEditorScrolling = true
+            // Sync to preview with debounce
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                previewScrollFraction = fraction
+                isEditorScrolling = false
+            }
+        }
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(border))
+        .cornerRadius(12)
+        .padding(12)
+    }
+
+    private var previewView: some View {
+        ScrollingPreviewView(
+            content: {
+                VStack(alignment: .leading, spacing: 0) {
+                    MarkdownRenderedView(markdown: filteredMarkdown, searchText: searchText)
+                }
+                .padding(28)
+                .frame(maxWidth: 720, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .background(bg)
+                .foregroundColor(textPrimary)
+            }(),
+            scrollToFraction: previewScrollFraction,
+            onScrollPositionChange: { fraction in
+                guard !isEditorScrolling else { return }
+                isPreviewScrolling = true
+                editorScrollFraction = fraction
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    isPreviewScrolling = false
+                }
+            }
+        )
     }
     
     private var emptyStateView: some View {
