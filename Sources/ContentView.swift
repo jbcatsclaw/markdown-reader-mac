@@ -78,11 +78,12 @@ struct ContentView: View {
             // Header
             Text("Files")
                 .font(.headline)
+                .foregroundColor(.white.opacity(0.92))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-            
-            Divider()
-            
+
+            Divider().overlay(border)
+
             // Recent files list
             List {
                 if recentFiles.isEmpty {
@@ -94,11 +95,12 @@ struct ContentView: View {
                         Button(action: { openFile(url) }) {
                             HStack {
                                 Image(systemName: "doc.text")
-                                    .foregroundColor(.accentColor)
+                                    .foregroundColor(accent)
                                 Text(url.lastPathComponent)
                                     .lineLimit(1)
                                 Spacer()
                             }
+                            .foregroundColor(.white.opacity(0.85))
                         }
                         .buttonStyle(.plain)
                         .padding(.vertical, 2)
@@ -107,13 +109,16 @@ struct ContentView: View {
                 }
             }
             .listStyle(.sidebar)
-            
-            Divider()
-            
+            .scrollContentBackground(.hidden)
+            .background(panel)
+
+            Divider().overlay(border)
+
             // Open button
             Button(action: { showOpenPanel = true }) {
                 Label("Open File...", systemImage: "folder")
                     .frame(maxWidth: .infinity)
+                    .foregroundColor(.white.opacity(0.85))
             }
             .buttonStyle(.plain)
             .padding(12)
@@ -195,12 +200,12 @@ struct ContentView: View {
             Divider().overlay(border)
 
             HSplitView {
-                // Left: Preview
-                MarkdownPreviewView(markdown: filteredMarkdown, searchText: searchText)
+                // Left: Editor
+                editorView
                     .frame(minWidth: 350)
 
-                // Right: Editor
-                editorView
+                // Right: Preview
+                MarkdownPreviewView(markdown: filteredMarkdown, searchText: searchText)
                     .frame(minWidth: 350)
             }
         }
