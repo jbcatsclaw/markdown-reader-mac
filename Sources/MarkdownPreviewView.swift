@@ -75,12 +75,10 @@ struct FullMarkdownView: View {
         let attString: AttributedString
         
         // Parse the content with inline markdown (bold, italic, code, links)
+        // NOTE: keep options minimal for broad Xcode/Swift compatibility.
         if let parsed = try? AttributedString(
             markdown: content,
-            options: AttributedString.MarkdownParsingOptions(
-                interpretedSyntax: .inlineOnly,
-                maximumLineLength: .max
-            )
+            options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnly)
         ) {
             attString = parsed
         } else {
@@ -121,13 +119,15 @@ struct FullMarkdownView: View {
         case .numbered:
             Text(attString)
         case .codeBlock:
+            let codeBg = Color(red: 0.08, green: 0.09, blue: 0.12)
+            let codeBorder = Color.white.opacity(0.08)
             Text(attString)
                 .font(.system(.body, design: .monospaced))
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(panel)
+                .background(codeBg)
                 .cornerRadius(8)
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(border))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(codeBorder))
         case .blockquote:
             HStack(alignment: .top, spacing: 8) {
                 Rectangle()
