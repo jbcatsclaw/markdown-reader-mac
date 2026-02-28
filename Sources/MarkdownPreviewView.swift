@@ -69,22 +69,21 @@ struct FullMarkdownView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     
-    @ViewBuilder
-    private func renderLine(_ line: (type: LineType, content: String), index: Int) -> some View {
-        let content = line.content
-        let attString: AttributedString
-        
-        // Parse the content with inline markdown (bold, italic, code, links)
-        // NOTE: keep options minimal for broad Xcode/Swift compatibility.
+    private func inlineAttributed(_ content: String) -> AttributedString {
+        // Parse inline markdown (bold, italic, code, links). Keep options minimal for compatibility.
         if let parsed = try? AttributedString(
             markdown: content,
             options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnly)
         ) {
-            attString = parsed
-        } else {
-            attString = AttributedString(content)
+            return parsed
         }
-        
+        return AttributedString(content)
+    }
+
+    @ViewBuilder
+    private func renderLine(_ line: (type: LineType, content: String), index: Int) -> some View {
+        let attString = inlineAttributed(line.content)
+
         switch line.type {
         case .heading1:
             Text(attString)
