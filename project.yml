@@ -1,0 +1,49 @@
+name: MarkdownReader
+options:
+  bundleIdPrefix: com.markdownreader
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGNING_REQUIRED: "NO"
+
+targets:
+  MarkdownReader:
+    type: application
+    platform: macOS
+    sources:
+      - Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.markdownreader.app
+        INFOPLIST_FILE: Sources/Info.plist
+        PRODUCT_NAME: MarkdownReader
+        COMBINE_HIDPI_IMAGES: YES
+        ENABLE_HARDENED_RUNTIME: NO
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleName: MarkdownReader
+        CFBundleDisplayName: Markdown Reader
+        CFBundleIdentifier: com.markdownreader.app
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "1.0"
+        CFBundlePackageType: APPL
+        CFBundleExecutable: MarkdownReader
+        LSMinimumSystemVersion: "13.0"
+        NSHighResolutionCapable: true
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Markdown
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Default
+            CFBundleTypeExtensions:
+              - md
+              - markdown
+              - mdown
+        NSHumanReadableCopyright: "Copyright © 2026. All rights reserved."

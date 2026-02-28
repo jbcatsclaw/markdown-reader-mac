@@ -1,0 +1,14 @@
+# Xcode
+.DS_Store
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+DerivedData/
+.build/
+
+# SwiftPM
+Package.resolved
+
+# XcodeGen
+*.xcodeproj/project.xcworkspace/xcuserdata/
