@@ -4,11 +4,14 @@ struct MarkdownPreviewView: View {
     let markdown: String
     let searchText: String
 
-    // Match the Obsidian-like palette used in ContentView
-    private let bg = Color(red: 0.05, green: 0.06, blue: 0.08)
-    private let panel = Color(red: 0.08, green: 0.09, blue: 0.12)
-    private let text = Color.white.opacity(0.92)
-    private let border = Color.white.opacity(0.08)
+    // Notion-like LIGHT theme palette
+    private let bg = Color(red: 0.98, green: 0.98, blue: 0.98)
+    private let panel = Color.white
+    private let textPrimary = Color(red: 0.12, green: 0.12, blue: 0.14)
+    private let textSecondary = Color(red: 0.45, green: 0.45, blue: 0.50)
+    private let border = Color.black.opacity(0.08)
+    private let accent = Color(red: 0.18, green: 0.18, blue: 0.20)
+    private let codeBg = Color(red: 0.94, green: 0.94, blue: 0.96)
 
     var body: some View {
         ScrollView {
@@ -20,7 +23,7 @@ struct MarkdownPreviewView: View {
             .frame(maxWidth: .infinity, alignment: .center)
         }
         .background(bg)
-        .foregroundColor(text)
+        .foregroundColor(textPrimary)
     }
 }
 
@@ -43,6 +46,12 @@ struct MarkdownRenderedView: View {
 struct FullMarkdownView: View {
     let markdown: String
     let searchText: String
+    
+    private let textPrimary = Color(red: 0.12, green: 0.12, blue: 0.14)
+    private let textSecondary = Color(red: 0.45, green: 0.45, blue: 0.50)
+    private let accent = Color(red: 0.18, green: 0.18, blue: 0.20)
+    private let border = Color.black.opacity(0.08)
+    private let codeBg = Color(red: 0.94, green: 0.94, blue: 0.96)
     
     // Use inlineOnly syntax (not inlineOnlyPreservingWhitespace) for better rendering
     // Note: AttributedString on SwiftUI has limitations with block-level elements.
@@ -89,34 +98,34 @@ struct FullMarkdownView: View {
         case .heading1:
             Text(attString)
                 .font(.system(size: 28, weight: .bold))
-                .foregroundColor(.white.opacity(0.95))
+                .foregroundColor(textPrimary)
                 .padding(.top, 24)
                 .padding(.bottom, 12)
                 .lineSpacing(4)
         case .heading2:
             Text(attString)
                 .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.white.opacity(0.93))
+                .foregroundColor(textPrimary)
                 .padding(.top, 20)
                 .padding(.bottom, 10)
                 .lineSpacing(3)
         case .heading3:
             Text(attString)
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(.white.opacity(0.92))
+                .foregroundColor(textPrimary)
                 .padding(.top, 16)
                 .padding(.bottom, 8)
                 .lineSpacing(2)
         case .heading4:
             Text(attString)
                 .font(.system(size: 17, weight: .semibold))
-                .foregroundColor(.white.opacity(0.91))
+                .foregroundColor(textPrimary)
                 .padding(.top, 8)
                 .padding(.bottom, 3)
         case .bullet:
             HStack(alignment: .top, spacing: 10) {
                 Text("•")
-                    .foregroundColor(Color(red: 0.36, green: 0.82, blue: 0.62))
+                    .foregroundColor(accent)
                 Text(attString)
                     .lineSpacing(4)
             }
@@ -124,22 +133,20 @@ struct FullMarkdownView: View {
         case .numbered:
             Text(attString)
         case .codeBlock:
-            let codeBg = Color(red: 0.11, green: 0.12, blue: 0.16) // Slightly lighter, Obsidian-like
-            let codeBorder = Color.white.opacity(0.12)
             Text(attString)
                 .font(.system(.body, design: .monospaced))
                 .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(codeBg)
                 .cornerRadius(10)
-                .overlay(RoundedRectangle(cornerRadius: 10).stroke(codeBorder))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(border))
         case .blockquote:
             HStack(alignment: .top, spacing: 8) {
                 Rectangle()
-                    .fill(Color(red: 0.36, green: 0.82, blue: 0.62).opacity(0.6))
+                    .fill(accent.opacity(0.6))
                     .frame(width: 3)
                 Text(attString)
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(textSecondary)
             }
             .padding(.vertical, 4)
         case .paragraph:
@@ -216,11 +223,13 @@ struct LegacyMarkdownView: View {
     let markdown: String
     let searchText: String
     
+    private let textPrimary = Color(red: 0.12, green: 0.12, blue: 0.14)
+    
     var body: some View {
         // Fallback for macOS 13 - show raw text with basic styling
         Text(markdown)
             .font(.body)
-            .foregroundColor(.white.opacity(0.92))
+            .foregroundColor(textPrimary)
             .lineSpacing(4)
             .textSelection(.enabled)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -233,8 +242,9 @@ struct CodeBlockView: View {
     let code: String
     let language: String?
     
-    private let panel = Color(red: 0.08, green: 0.09, blue: 0.12)
-    private let border = Color.white.opacity(0.08)
+    private let panel = Color.white
+    private let border = Color.black.opacity(0.08)
+    private let codeBg = Color(red: 0.94, green: 0.94, blue: 0.96)
     
     var body: some View {
         ScrollView(.horizontal) {
@@ -243,7 +253,7 @@ struct CodeBlockView: View {
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .background(panel)
+        .background(codeBg)
         .cornerRadius(8)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
